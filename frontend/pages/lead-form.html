@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lead Form - Lead Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <a href="leads.html" class="btn btn-outline-secondary btn-sm"
+              ><i class="bi bi-arrow-left me-1"></i> Back to Directory</a
+            >
+            <h3 class="fw-bold m-0" id="formTitle">Create New Lead</h3>
+          </div>
+
+          <div id="alertContainer"></div>
+
+          <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-body p-4">
+              <form id="leadForm" novalidate>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="leadName" class="form-label fw-bold"
+                      >Lead Name <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="leadName"
+                      required
+                      placeholder="e.g. Rahul Sharma"
+                    />
+                    <div class="invalid-feedback">Lead Name is required.</div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="companyName" class="form-label fw-bold"
+                      >Company Name <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="companyName"
+                      required
+                      placeholder="e.g. Acme Corp"
+                    />
+                    <div class="invalid-feedback">
+                      Company Name is required.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="mobile" class="form-label fw-bold"
+                      >Mobile Number <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="mobile"
+                      required
+                      maxlength="10"
+                      minlength="10"
+                      pattern="[0-9]{10}"
+                      inputmode="numeric"
+                      placeholder="e.g. 9876543210"
+                    />
+                    <div class="invalid-feedback">
+                      Mobile number must contain exactly 10 digits.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="email" class="form-label fw-bold"
+                      >Email Address <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      required
+                      placeholder="e.g. rahul@acme.com"
+                    />
+                    <div class="invalid-feedback">Valid email is required.</div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="service" class="form-label fw-bold"
+                      >Service Required
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="service" required>
+                      <option value="">Select Service...</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a service.</div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="leadSource" class="form-label fw-bold"
+                      >Lead Source <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="leadSource" required>
+                      <option value="">Select Source...</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select a lead source.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="estimatedValue" class="form-label fw-bold"
+                      >Estimated Value (₹)
+                      <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      step="500"
+                      class="form-control"
+                      id="estimatedValue"
+                      required
+                      placeholder="150000"
+                    />
+                    <div class="invalid-feedback">
+                      Value must be a positive number.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="status" class="form-label fw-bold"
+                      >Lead Status <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="status" required>
+                      <option value="">Select Status...</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select lead status.
+                    </div>
+                  </div>
+
+                  <div class="col-md-12" id="assignedToGroup">
+                    <label for="assignedTo" class="form-label fw-bold"
+                      >Assigned To User
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="assignedTo" required>
+                      <option value="">Select User...</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Please assign this lead to a user.
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="remarks" class="form-label fw-bold"
+                      >Remarks / Notes</label
+                    >
+                    <textarea
+                      class="form-control"
+                      id="remarks"
+                      rows="3"
+                      placeholder="Additional details or specific requirements..."
+                    ></textarea>
+                  </div>
+
+                  <div class="col-12 mt-4 d-flex justify-content-end gap-2">
+                    <a href="leads.html" class="btn btn-secondary">Cancel</a>
+                    <button
+                      type="submit"
+                      class="btn btn-primary px-4"
+                      id="saveBtn"
+                    >
+                      <span id="saveBtnText">Save Lead</span>
+                      <span
+                        id="saveSpinner"
+                        class="spinner-border spinner-border-sm d-none"
+                        role="status"
+                      ></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/lead-form.js"></script>
+  </body>
+</html>

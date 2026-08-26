@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leads Directory - Lead Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+  </head>
+  <body class="bg-light">
+    <div class="d-flex flex-column flex-md-row min-vh-100">
+      <nav class="sidebar bg-dark text-white p-3 col-md-3 col-lg-2">
+        <div
+          class="d-flex align-items-center mb-4 text-white text-decoration-none"
+        >
+          <i class="bi bi-layers fs-4 me-2 text-primary"></i>
+          <span class="fs-5 fw-bold" id="sidebarTitle">Lead Portal</span>
+        </div>
+        <hr />
+        <ul class="nav nav-pills flex-column mb-auto" id="dynamicNav"></ul>
+        <hr />
+        <div class="dropdown">
+          <button
+            class="btn btn-dark dropdown-toggle w-100 text-start d-flex align-items-center"
+            type="button"
+            data-bs-toggle="dropdown"
+          >
+            <i class="bi bi-person-circle fs-5 me-2"></i>
+            <span id="currentUserLabel" class="text-truncate">Account</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-dark shadow">
+            <li>
+              <button class="dropdown-item" id="logoutBtn">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="flex-grow-1 p-4 overflow-auto">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="fw-bold m-0">Leads Directory</h2>
+            <p class="text-muted small m-0">Filter, search, and manage leads</p>
+          </div>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+          <div class="card-body p-3">
+            <div class="row g-2">
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  id="searchInput"
+                  class="form-control"
+                  placeholder="Search by name, company, email..."
+                />
+              </div>
+              <div class="col-md-2">
+                <select id="statusFilter" class="form-select">
+                  <option value="">All Statuses</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select id="serviceFilter" class="form-select">
+                  <option value="">All Services</option>
+                </select>
+              </div>
+              <div class="col-md-2" id="assignedToContainer">
+                <select id="assignedToFilter" class="form-select">
+                  <option value="">All Assigned</option>
+                </select>
+              </div>
+              <div class="col-md-3 d-flex gap-2">
+                <select id="sortBy" class="form-select">
+                  <option value="createdAt">Sort: Created Date</option>
+                  <option value="estimatedValue">Sort: Value</option>
+                  <option value="leadName">Sort: Lead Name</option>
+                </select>
+                <button id="resetFiltersBtn" class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Lead Name</th>
+                    <th>Company</th>
+                    <th>Contact info</th>
+                    <th>Service</th>
+                    <th>Source</th>
+                    <th>Est. Value</th>
+                    <th>Assigned To</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leadsTableBody">
+                  <tr>
+                    <td colspan="10" class="text-center py-4">
+                      <span
+                        class="spinner-border spinner-border-sm text-primary"
+                      ></span>
+                      Loading leads...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div
+            class="card-footer bg-white d-flex justify-content-between align-items-center py-3"
+          >
+            <span class="text-muted small" id="paginationInfo"
+              >Showing 0 of 0</span
+            >
+            <nav>
+              <ul
+                class="pagination pagination-sm m-0"
+                id="paginationControls"
+              ></ul>
+            </nav>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold text-danger">
+              <i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete lead
+            <strong id="deleteLeadName"></strong>? This operation cannot be
+            undone.
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+              Delete Lead
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/leads.js"></script>
+  </body>
+</html>
