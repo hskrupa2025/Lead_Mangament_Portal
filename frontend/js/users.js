@@ -79,11 +79,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           </td>
           <td><small>${Formatters.date(u.createdAt)}</small></td>
           <td class="text-end">
-            <button class="btn btn-sm btn-outline-primary edit-user-btn me-1" data-id="${u._id}" data-name="${escapeHtml(u.name)}" data-email="${escapeHtml(u.email)}" data-role="${u.role}">
+            <button class="btn btn-sm btn-outline-primary edit-user-btn me-1" data-id="${u._id}" data-name="${escapeHtml(u.name)}" data-email="${escapeHtml(u.email)}" data-role="${u.role}" title="Edit User">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm ${u.isActive !== false ? 'btn-outline-warning' : 'btn-outline-success'} toggle-status-btn me-1" data-id="${u._id}" data-is-active="${u.isActive !== false}">
+            <button class="btn btn-sm ${u.isActive !== false ? 'btn-outline-warning' : 'btn-outline-success'} toggle-status-btn me-1" data-id="${u._id}" data-is-active="${u.isActive !== false}" title="${u.isActive !== false ? 'Deactivate' : 'Activate'} User">
               ${u.isActive !== false ? 'Deactivate' : 'Activate'}
+            </button>
+            <button class="btn btn-sm btn-outline-danger delete-user-btn" data-id="${u._id}" title="Delete User">
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
@@ -119,6 +122,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
             });
+
+            document.querySelectorAll('.delete-user-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this user account? This action cannot be undone.')) {
+                        try {
+                            await API.delete(`/users/${id}`);
+                            UI.showAlert('User deleted successfully.', 'success');
+                            loadUsers();
+                        } catch (err) {
+                            UI.showAlert(err.message || 'User deletion failed.', 'danger');
+                        }
+                    }
+                });
+            });
+
         } catch (err) {
             tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">${err.message || 'Failed to load users.'}</td></tr>`;
         }
