@@ -108,7 +108,8 @@ Development seed credentials:
 
 ```text
 Admin: admin@example.com / Admin@123
-User:  priya@example.com / User@123
+User:  Multiple User email and password 
+   
 ```
 
 Do not use these credentials in production.
