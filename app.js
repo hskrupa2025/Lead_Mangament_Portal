@@ -14,7 +14,8 @@ const dashboardRoutes = require('./backend/routes/dashboardRoutes');
 
 const app = express();
 
-app.use(helmet());
+// Disabled strict Content Security Policy to allow inline scripts and CDN assets
+app.use(helmet({ contentSecurityPolicy: false }));
 
 const allowedOrigins = [
     process.env.CLIENT_URL || 'http://127.0.0.1:5500',
@@ -39,8 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-// Serve the browser application from the same server as the API. This makes
-// http://localhost:<PORT>/ load frontend/index.html instead of the API 404.
+// Serve the browser application from the same server as the API.
 app.use(express.static(path.join(__dirname, 'frontend')));
 
 const limiter = rateLimit({
