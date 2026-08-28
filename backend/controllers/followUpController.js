@@ -62,7 +62,14 @@ const createFollowUp = async (req, res, next) => {
         });
 
         if (lead.status === 'New') {
+            const previousStatus = lead.status;
             lead.status = 'Contacted';
+            lead.statusHistory = lead.statusHistory || [];
+            lead.statusHistory.push({
+                fromStatus: previousStatus,
+                toStatus: lead.status,
+                changedBy: req.user._id
+            });
             await lead.save();
         }
 

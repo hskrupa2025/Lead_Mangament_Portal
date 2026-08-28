@@ -68,7 +68,8 @@ const getLeadById = async (req, res, next) => {
     try {
         const lead = await Lead.findById(req.params.id)
             .populate('assignedTo', 'name email role')
-            .populate('createdBy', 'name email');
+            .populate('createdBy', 'name email')
+            .populate('statusHistory.changedBy', 'name email');
 
         if (!lead) {
             return res.status(404).json({
@@ -105,7 +106,6 @@ const createLead = async (req, res, next) => {
             estimatedValue,
             assignedTo,
             remarks,
-            status
         } = req.body;
 
         const assignedUser = await User.findById(assignedTo);
@@ -126,7 +126,11 @@ const createLead = async (req, res, next) => {
             estimatedValue: estimatedValue || 0,
             assignedTo,
             remarks: remarks || '',
-            status: status || 'New',
+            status: 'New',
+            statusHistory: [{
+                toStatus: 'New',
+                changedBy: req.user._id
+            }],
             createdBy: req.user._id
         });
 
@@ -176,7 +180,21 @@ const updateLead = async (req, res, next) => {
             }
         }
 
-        lead = await Lead.findByIdAndUpdate(req.params.id, req.body, {
+        if (req.body.status && req.body.status !== lead.status) {
+            lead.statusHistory = lead.statusHistory || [];
+            lead.statusHistory.push({
+                fromStatus: lead.status,
+                toStatus: req.body.status,
+                changedBy: req.user._id
+            });
+        }
+
+        lead = await Lead.findByIdAndUpdate(req.params.id, {
+            ...req.body,
+            ...(req.body.status && req.body.status !== lead.status
+                ? { statusHistory: lead.statusHistory }
+                : {})
+        }, {
             new: true,
             runValidators: true
         })
@@ -277,8 +295,17 @@ const updateLeadStatus = async (req, res, next) => {
             });
         }
 
-        lead.status = status;
-        await lead.save();
+        if (lead.status !== status) {
+            const previousStatus = lead.status;
+            lead.status = status;
+            lead.statusHistory = lead.statusHistory || [];
+            lead.statusHistory.push({
+                fromStatus: previousStatus,
+                toStatus: status,
+                changedBy: req.user._id
+            });
+            await lead.save();
+        }
 
         res.status(200).json({
             success: true,

@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('dAssignedTo').textContent = lead.assignedTo ? (lead.assignedTo.name || lead.assignedTo.email) : 'Unassigned';
             document.getElementById('dCreated').textContent = Formatters.datetime(lead.createdAt);
             document.getElementById('dRemarks').textContent = lead.remarks || 'No remarks provided.';
+            renderStatusHistory(lead);
 
             document.getElementById('actionButtons').innerHTML = `
         <a href="lead-form.html?id=${lead._id}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil me-1"></i> Edit Lead</a>
@@ -100,5 +101,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
             timeline.innerHTML = '<p class="text-danger small">Failed to load follow-up timeline.</p>';
         }
+    }
+
+    function renderStatusHistory(lead) {
+        const timeline = document.getElementById('statusTimeline');
+        const history = lead.statusHistory?.length
+            ? [...lead.statusHistory].sort((a, b) => new Date(a.changedAt) - new Date(b.changedAt))
+            : [{ toStatus: lead.status, changedAt: lead.createdAt, changedBy: lead.createdBy }];
+
+        timeline.innerHTML = `
+            <div class="timeline">
+                ${history.map(entry => `
+                    <div class="timeline-item">
+                        <div class="fw-bold">${entry.fromStatus ? `${entry.fromStatus} &rarr; ` : ''}${entry.toStatus}</div>
+                        <div class="text-muted small">${Formatters.datetime(entry.changedAt)}</div>
+                        <div class="text-secondary small">Changed by: ${entry.changedBy?.name || entry.changedBy?.email || 'System'}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
     }
 });

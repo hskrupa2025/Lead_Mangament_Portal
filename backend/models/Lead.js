@@ -62,6 +62,26 @@ const leadSchema = new mongoose.Schema(
             default: 'New',
             index: true
         },
+        statusHistory: [{
+            fromStatus: {
+                type: String,
+                enum: LEAD_STATUSES
+            },
+            toStatus: {
+                type: String,
+                required: true,
+                enum: LEAD_STATUSES
+            },
+            changedBy: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+                required: true
+            },
+            changedAt: {
+                type: Date,
+                default: Date.now
+            }
+        }],
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',

@@ -99,7 +99,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         CONFIG.SOURCES.forEach(s => sourceSel.innerHTML += `<option value="${s}">${s}</option>`);
 
         const statusSel = document.getElementById('status');
-        CONFIG.STATUSES.forEach(s => statusSel.innerHTML += `<option value="${s}">${s}</option>`);
+        const availableStatuses = isEdit ? CONFIG.STATUSES : ['New'];
+        availableStatuses.forEach(s => statusSel.innerHTML += `<option value="${s}">${s}</option>`);
+        if (!isEdit) statusSel.value = 'New';
     }
 
     async function loadAssignedUsers() {
